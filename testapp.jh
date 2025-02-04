@@ -1,0 +1,140 @@
+// 用户表
+entity AppUser {
+    id Long,
+    username String required unique,
+    password String required,
+    mobile String unique,
+    email String unique,
+    userType String required,
+    createdAt ZonedDateTime required,
+    updatedAt ZonedDateTime required,
+    openid String
+}
+
+// 产品分类表
+entity ProductCategory {
+    id Long,
+    name String required,
+    createdAt ZonedDateTime required,
+    updatedAt ZonedDateTime required
+}
+
+// 农产品表
+entity Product {
+    id Long,
+    name String required,
+    description String,
+    price BigDecimal required,
+    stock Integer required,
+    imageUrl String,
+    videoUrl String,
+    isRecommended Boolean required,
+    createdAt ZonedDateTime required,
+    updatedAt ZonedDateTime required
+}
+
+// 咨询信息表
+entity Consultation {
+    id Long,
+    content String required,
+    createdAt ZonedDateTime required,
+    updatedAt ZonedDateTime required
+}
+
+// 咨询回复表
+entity ConsultationReply {
+    id Long,
+    replyContent String required,
+    createdAt ZonedDateTime required,
+    updatedAt ZonedDateTime required
+}
+
+// 订单表
+entity Order {
+    id Long,
+    totalAmount BigDecimal required,
+    status String required,
+    createdAt ZonedDateTime required,
+    updatedAt ZonedDateTime required
+}
+
+// 订单详情表
+entity OrderDetail {
+    id Long,
+    quantity Integer required,
+    unitPrice BigDecimal required,
+    createdAt ZonedDateTime required,
+    updatedAt ZonedDateTime required
+}
+
+// 订单物流表
+entity OrderLogistics {
+    id Long,
+    deliveryType String required,
+    courierCompany String,
+    trackingNumber String,
+    status String required,
+    estimatedDeliveryTime ZonedDateTime,
+    actualDeliveryTime ZonedDateTime,
+    createdAt ZonedDateTime required,
+    updatedAt ZonedDateTime required
+}
+
+// 购物车表
+entity Cart {
+    id Long,
+    quantity Integer required,
+    createdAt ZonedDateTime required,
+    updatedAt ZonedDateTime required
+}
+
+// 收藏表
+entity Favorite {
+    id Long,
+    createdAt ZonedDateTime required,
+    updatedAt ZonedDateTime required
+}
+
+// 支付记录表
+entity Payment {
+    id Long,
+    paymentMethod String required,
+    paymentStatus String required,
+    paymentDate ZonedDateTime required,
+    amount BigDecimal required
+}
+
+// 首页广告Banner配置表
+entity Banner {
+    id Long,
+    title String required,
+    description String,
+    imageUrl String required,
+    linkUrl String required,
+    order Integer,
+    isActive Boolean,
+    createdAt ZonedDateTime required,
+    updatedAt ZonedDateTime required
+}
+
+// 关系定义
+relationship ManyToOne {
+    Product{categoryId} to ProductCategory{id},
+    Consultation{userId} to AppUser{id},
+    ConsultationReply{consultationId} to Consultation{id},
+    ConsultationReply{adminId} to AppUser{id},
+    Order{userId} to AppUser{id},
+    OrderDetail{orderId} to Order{id},
+    OrderDetail{productId} to Product{id},
+    OrderLogistics{orderId} to Order{id},
+    Cart{userId} to AppUser{id},
+    Cart{productId} to Product{id},
+    Favorite{userId} to AppUser{id},
+    Favorite{productId} to Product{id},
+    Payment{orderId} to Order{id}
+}
+
+// 实体和关系的其他配置
+dto * with mapstruct
+service * with serviceImpl
+paginate Product, Consultation, ConsultationReply, Order, OrderDetail, OrderLogistics, Cart, Favorite, Payment, Banner with pagination
